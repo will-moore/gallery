@@ -1,3 +1,7 @@
+
+import StudiesModel from './model';
+import { renderStudyKeys, loadMaprConfig, renderStudy } from './util';
+
 // loaded below
 let mapr_settings = {};
 
@@ -14,7 +18,7 @@ document.getElementById('maprConfig').onchange = (event) => {
   document.getElementById('maprQuery').placeholder = placeholder;
   // Show all autocomplete options...
   $("#maprQuery").focus();
-  render();
+  renderCategories();
 }
 
 document.getElementById('maprQuery').onfocus = (event) => {
@@ -103,7 +107,7 @@ $("#maprQuery")
 
 // ------------ Render -------------------------
 
-function render() {
+function renderCategories() {
   document.getElementById('studies').innerHTML = "";
 
   let categories = Object.keys(CATEGORY_QUERIES);
@@ -136,116 +140,30 @@ function render() {
       let type = studyData['@type'].split('#')[1].toLowerCase();
       return `${ BASE_URL }/webclient/?show=${ type }-${ studyData['@id'] }`;
     }
-
-    matches.forEach(study => renderStudy(study, cat.label, linkFunc));
+    let htmlFunc = studyHtml;
+    matches.forEach(study => renderStudy(study, cat.label, linkFunc, htmlFunc));
   });
 
   // Now we iterate all Studies in DOM, loading image ID for link and thumbnail
-  loadStudyThumbnails();
+  model.loadStudyThumbnails();
 }
 
 
-function renderStudy(studyData, elementId, linkFunc) {
+loadMaprConfig((settings) => {
+  mapr_settings = settings;
+});
 
-  // Add Project or Screen to the page
-  // If filterKey, try to render the Key: Value
-  let titleRe = /Publication Title\n(.+)[\n]?/
-  // let descRe = /Experiment Description\n(.+)[\n]?/
-  let desc = studyData.Description;
-  let match = titleRe.exec(desc);
-  let title = match ? match[1] : '';
-  let type = studyData['@type'].split('#')[1].toLowerCase();
-  let studyLink = linkFunc(studyData);
-  // save for later
-  studyData.title = title;
-
-  if (title.length >0) {
-     desc = desc.split(title)[1];
-   }
-  // First line is e.g. "Screen Description". Show NEXT line only.
-  let studyDesc = desc.split('\n').filter(l => l.length > 0)[1];
-
-  let idrId = studyData.Name.split('-')[0];  // idr0001
-  let authors = model.getStudyValue(studyData, "Publication Authors") || "";
-
-  // Function (and template) are defined where used in index.html
-  let html = studyHtml(studyLink, studyDesc, idrId, title, authors, BASE_URL)
-
-  var div = document.createElement( "div" );
-  div.innerHTML = html;
-  div.className = "row study ";
-  div.dataset.obj_type = type;
-  div.dataset.obj_id = studyData['@id'];
-  document.getElementById(elementId).appendChild(div);
-}
-
-// --------- Render utils -----------
-function loadStudyThumbnails() {
-
-  document.querySelectorAll('div.study').forEach(element => {
-    // Load image ID for study, then update DOM to load thumbnail
-    let obj_id = element.dataset.obj_id;
-    let obj_type = element.dataset.obj_type;
-    if (!obj_id || !obj_type) return;
-
-    model.loadImage(obj_type, obj_id, (image) => {
-      let iid = image['@id'];
-      // Render thumbnail by default
-      let thumbUrl = `${ BASE_URL }/webgateway/render_thumbnail/${ iid }/`;
-      // If we know the image is not Big, can render whole plane
-      if (image.Pixels && image.Pixels.SizeX * image.Pixels.SizeY < 10000000) {
-        thumbUrl = `${ BASE_URL }/webgateway/render_image/${ iid }/`;
-      }
-      // Find all studies matching the study ID and set src on image
-      let studyImage = element.querySelector('img.studyImage');
-      studyImage.src = thumbUrl;
-
-      // viewer link
-      let link = `${ BASE_URL }/webclient/img_detail/${ iid }/`;
-      element.querySelector('a.viewerLink').href = link;
-    });
-  });
-}
-
-function renderStudyKeys() {
-  let html = FILTER_KEYS
-      .map(key => {
-        if (key.label && key.value) {
-          return `<option value="${ key.value }">${ key.label }</option>`
-        }
-        return `<option value="${ key }">${ key }</option>`
-      })
-      .join("\n");
-  document.getElementById('studyKeys').innerHTML = html;
-}
 renderStudyKeys();
 
 
 // ----------- Load / Filter Studies --------------------
 
-// Do the loading and render() when done...
+// Do the loading and renderCategories() when done...
 model.loadStudies(() => {
   // Immediately filter by Super category
   if (SUPER_CATEGORY && SUPER_CATEGORY.query) {
     model.studies = model.filterStudiesByMapQuery(SUPER_CATEGORY.query);
   }
-  render();
+  renderCategories();
 });
 
-
-// Load MAPR config
-fetch(GALLERY_INDEX + 'idr/mapr/config/')
-  .then(response => response.json())
-  .then(data => {
-    mapr_settings = data;
-
-    let html = FILTER_MAPR_KEYS.map(key => {
-      let config = mapr_settings[key];
-      if (config) {
-        return `<option value="mapr_${ key }">${ config.label }</option>`;
-      } else {
-        return "";
-      }
-    }).join("\n");
-    document.getElementById('maprKeys').innerHTML = html;
-  });

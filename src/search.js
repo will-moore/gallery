@@ -3,17 +3,6 @@
 // Model for loading Projects, Screens and their Map Annotations
 let model = new StudiesModel();
 
-function renderStudyKeys() {
-  let html = FILTER_KEYS
-      .map(key => {
-        if (key.label && key.value) {
-          return `<option value="${ key.value }">${ key.label }</option>`
-        }
-        return `<option value="${ key }">${ key }</option>`
-      })
-      .join("\n");
-  document.getElementById('studyKeys').innerHTML = html;
-}
 renderStudyKeys();
 
 
@@ -290,7 +279,7 @@ function render(filterFunc) {
 
   studiesToRender.forEach(s => renderStudy(s, 'studies', linkFunc, htmlFunc));
 
-  loadStudyThumbnails();
+  model.loadStudyThumbnails();
 }
 
 
@@ -327,33 +316,6 @@ function renderStudy(studyData, elementId, linkFunc, htmlFunc) {
   document.getElementById(elementId).appendChild(div);
 }
 
-// --------- Render utils -----------
-function loadStudyThumbnails() {
-
-  document.querySelectorAll('div.study').forEach(element => {
-    // Load image ID for study, then update DOM to load thumbnail
-    let obj_id = element.dataset.obj_id;
-    let obj_type = element.dataset.obj_type;
-    if (!obj_id || !obj_type) return;
-
-    model.loadImage(obj_type, obj_id, (image) => {
-      let iid = image['@id'];
-      // Render thumbnail by default
-      let thumbUrl = `${ BASE_URL }/webgateway/render_thumbnail/${ iid }/`;
-      // If we know the image is not Big, can render whole plane
-      if (image.Pixels && image.Pixels.SizeX * image.Pixels.SizeY < 10000000) {
-        thumbUrl = `${ BASE_URL }/webgateway/render_image/${ iid }/`;
-      }
-      // Find all studies matching the study ID and set src on image
-      let studyImage = element.querySelector('img.studyImage');
-      studyImage.src = thumbUrl;
-
-      // viewer link
-      let link = `${ BASE_URL }/webclient/img_detail/${ iid }/`;
-      element.querySelector('a.viewerLink').href = link;
-    });
-  });
-}
 
 // ----------- Load / Filter Studies --------------------
 
@@ -374,20 +336,8 @@ window.onpopstate = (event) => {
 
 
 // Load MAPR config
-fetch('/gallery/idr/mapr/config/')
-  .then(response => response.json())
-  .then(data => {
-    mapr_settings = data;
+loadMaprConfig((settings) => {
+  mapr_settings = settings;
+  populateInputsFromSearch();
+});
 
-    let html = FILTER_MAPR_KEYS.map(key => {
-      let config = mapr_settings[key];
-      if (config) {
-        return `<option value="mapr_${ key }">${ config.label }</option>`;
-      } else {
-        return "";
-      }
-    }).join("\n");
-    document.getElementById('maprKeys').innerHTML = html;
-
-    populateInputsFromSearch();
-  });

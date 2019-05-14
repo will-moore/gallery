@@ -22,6 +22,8 @@
 
 import os
 from setuptools import setup, find_packages
+import setuptools.command.install
+from distutils.core import Command
 
 
 # Utility function to read the README file.
@@ -34,6 +36,60 @@ def read(fname):
 
 VERSION = '3.1.1'
 HOMEPAGE = "https://github.com/ome/omero-gallery"
+
+
+cmdclass = {}
+
+
+class NpmInstall(Command):
+
+    def initialize_options(self):
+        pass
+
+    def finalize_options(self):
+        pass
+
+    def run(self):
+        self.spawn(['npm', 'install'])
+
+
+cmdclass['npm_install'] = NpmInstall
+
+
+class Webpack(Command):
+
+    sub_commands = [
+        ('npm_install', None)
+    ]
+
+    def initialize_options(self):
+        pass
+
+    def finalize_options(self):
+        pass
+
+    def run(self):
+        if not os.path.isdir('src'):
+            return
+        for command in self.get_sub_commands():
+            self.run_command(command)
+
+        self.spawn(['npm', 'run', 'webpack'])
+
+
+cmdclass['webpack'] = Webpack
+
+
+class Install(setuptools.command.install.install):
+
+    def run(self):
+        if os.path.isdir('src'):
+            self.run_command('webpack')
+        setuptools.command.install.install.run(self)
+
+
+cmdclass['install'] = Install
+
 
 setup(name="omero-gallery",
       packages=find_packages(exclude=['ez_setup']),
@@ -67,4 +123,5 @@ setup(name="omero-gallery",
       keywords=['OMERO.web', 'plugin'],
       include_package_data=True,
       zip_safe=False,
+      cmdclass=cmdclass,
       )

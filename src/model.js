@@ -268,7 +268,7 @@ StudiesModel.prototype.loadImage = function loadImage(obj_type, obj_id, callback
     fetch(url)
       .then(response => response.json())
       .then(data => {
-        obj = data.data[0];
+        let obj = data.data[0];
         // Jump into the 'middle' of plate to make sure Wells have images
         // NB: Some plates don't have Well at each Row/Column spot. Well_count < Rows * Cols * 0.5
         let offset = Math.max(0, parseInt(obj.Rows * obj.Columns * 0.25) - limit);
@@ -299,7 +299,7 @@ StudiesModel.prototype.loadImage = function loadImage(obj_type, obj_id, callback
     fetch(url)
       .then(response => response.json())
       .then(data => {
-        obj = data.data[0];
+        let obj = data.data[0];
         if (!obj) {
           console.log('No Dataset in Project!', data);
           return;
@@ -340,3 +340,34 @@ StudiesModel.prototype.getImageId = function getImageId(obj_type, obj_id, callba
     })
   
 }
+
+
+StudiesModel.prototype.loadStudyThumbnails = function loadStudyThumbnails() {
+
+  document.querySelectorAll('div.study').forEach(element => {
+    // Load image ID for study, then update DOM to load thumbnail
+    let obj_id = element.dataset.obj_id;
+    let obj_type = element.dataset.obj_type;
+    if (!obj_id || !obj_type) return;
+
+    this.loadImage(obj_type, obj_id, (image) => {
+      let iid = image['@id'];
+      // Render thumbnail by default
+      let thumbUrl = `${ BASE_URL }/webgateway/render_thumbnail/${ iid }/`;
+      // If we know the image is not Big, can render whole plane
+      if (image.Pixels && image.Pixels.SizeX * image.Pixels.SizeY < 10000000) {
+        thumbUrl = `${ BASE_URL }/webgateway/render_image/${ iid }/`;
+      }
+      // Find all studies matching the study ID and set src on image
+      let studyImage = element.querySelector('img.studyImage');
+      studyImage.src = thumbUrl;
+
+      // viewer link
+      let link = `${ BASE_URL }/webclient/img_detail/${ iid }/`;
+      element.querySelector('a.viewerLink').href = link;
+    });
+  });
+}
+
+export default StudiesModel
+
