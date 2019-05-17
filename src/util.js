@@ -1,3 +1,6 @@
+
+import {getStudyValue} from './model'
+
 export function renderStudyKeys() {
   let html = FILTER_KEYS
       .map(key => {
@@ -51,10 +54,13 @@ export function renderStudy(studyData, elementId, linkFunc, htmlFunc) {
      desc = desc.split(title)[1];
    }
   // First line is e.g. "Screen Description". Show NEXT line only.
-  let studyDesc = desc.split('\n').filter(l => l.length > 0)[1];
+  let studyDesc = "";
+  if (desc) {
+    studyDesc = desc.split('\n').filter(l => l.length > 0)[1];
+  }
 
   let idrId = studyData.Name.split('-')[0];  // idr0001
-  let authors = model.getStudyValue(studyData, "Publication Authors") || "";
+  let authors = getStudyValue(studyData, "Publication Authors") || "";
 
   // Function (and template) are defined where used in index.html
   let html = htmlFunc(studyLink, studyDesc, idrId, title, authors, BASE_URL)

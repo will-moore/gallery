@@ -36,7 +36,7 @@ function filterStudiesByMapr(value) {
   let configId = document.getElementById("maprConfig").value.replace("mapr_", "");
   let url = `${ BASE_URL }/mapr/api/${ configId }/?value=${ value }`;
   // Cache-buster. See https://trello.com/c/GpXEHzjV/519-cors-access-control-allow-origin-cached
-  url += '&_=' + Math.random();
+  url += '&_=' + CACHE_BUSTER;
   $.getJSON(url, (data) => {
     // filter studies by 'screens' and 'projects'
     let imageCounts = {};
@@ -77,6 +77,13 @@ document.getElementById('maprQuery').onfocus = (event) => {
 
 // ------ AUTO-COMPLETE -------------------
 
+function showSpinner() {
+  document.getElementById('spinner').style.visibility = 'visible';
+}
+function hideSpinner() {
+  document.getElementById('spinner').style.visibility = 'hidden';
+}
+
 $("#maprQuery")
     .keyup(event => {
       if (event.which == 13) {
@@ -113,29 +120,50 @@ $("#maprQuery")
           return;
         }
 
-        // If empty, don't handle mapr...
-        if (request.term.length === 0) {
-          render();
+        // Don't handle empty query for mapr
+        if (request.term.length == 0) {
           return;
         }
 
         // Auto-complete to filter by mapr...
         configId = configId.replace('mapr_', '');
-        let url = `${ BASE_URL }/mapr/api/autocomplete/${ configId }/`;
         let case_sensitive = false;
 
+        let requestData = {
+            case_sensitive: case_sensitive,
+            '_': CACHE_BUSTER,    // CORS cache-buster
+        }
+        let url;
+        if (request.term.length === 0) {
+          // Try to list all top-level values.
+          // This works for 'wild-card' configs where number of values is small e.g. Organism
+          // But will return empty list for e.g. Gene
+          url = `${ BASE_URL }/mapr/api/${ configId }/`;
+          requestData.orphaned = true
+        } else {
+          // Find auto-complete matches
+          url = `${ BASE_URL }/mapr/api/autocomplete/${ configId }/`;
+          requestData.value = case_sensitive ? request.term : request.term.toLowerCase();
+          requestData.query = true;   // use a 'like' HQL query
+        }
+
+        showSpinner();
         $.ajax({
             dataType: "json",
             type : 'GET',
             url: url,
-            data: {
-                value: case_sensitive ? request.term : request.term.toLowerCase(),
-                query: true,
-                case_sensitive: case_sensitive,
-                "_": Math.random()     // cache-buster
-            },
+            data: requestData,
             success: function(data) {
-                if (data.length > 0) {
+                hideSpinner();
+                if (request.term.length === 0) {
+                  // Top-level terms in 'maps'
+                  if (data.maps && data.maps.length > 0) {
+                    let terms = data.maps.map(m => m.id);
+                    terms.sort();
+                    response(terms);
+                  }
+                }
+                else if (data.length > 0) {
                     response( $.map( data, function(item) {
                         return item;
                     }));
@@ -144,6 +172,7 @@ $("#maprQuery")
                 }
             },
             error: function(data) {
+                hideSpinner();
                 response([{ label: 'Error occured.', value: -1 }]);
             }
         });
@@ -215,7 +244,12 @@ function renderMapr(maprData) {
   htmlFunc = maprHtml;
 
   let totalCount = maprData.reduce((count, data) => count + data.imageCount, 0);
-  let filterMessage = `Found ${ totalCount } images in ${ maprData.length} studies`;
+  let filterMessage = "";
+  if (maprData.length === 0) {
+    filterMessage = noStudiesMessage();
+  } else {
+    filterMessage = `Found ${ totalCount } images in ${ maprData.length} studies`;
+  }
   document.getElementById('filterCount').innerHTML = filterMessage;
 
   maprData.forEach(s => renderStudy(s, 'studies', linkFunc, htmlFunc));
@@ -230,13 +264,13 @@ function renderMapr(maprData) {
     let configId = document.getElementById("maprConfig").value.replace('mapr_', '');
     let maprValue = document.getElementById('maprQuery').value;
     let url = `${ BASE_URL }/mapr/api/${ configId }/${ childType }/?value=${ maprValue }&id=${ objId }`;
-    url += '&_=' + Math.random();
+    url += '&_=' + CACHE_BUSTER;
     fetch(url)
       .then(response => response.json())
       .then(data => {
         let firstChild = data[childType][0];
         let imagesUrl = `${ BASE_URL }/mapr/api/${ configId }/images/?value=${ maprValue }&id=${ firstChild.id }&node=${ firstChild.extra.node }`;
-        imagesUrl += '&_=' + Math.random();
+        imagesUrl += '&_=' + CACHE_BUSTER;
         return fetch(imagesUrl);
       })
       .then(response => response.json())
@@ -254,10 +288,10 @@ function renderMapr(maprData) {
 function render(filterFunc) {
   document.getElementById('studies').innerHTML = "";
 
-  // if (!filterFunc) {
-  //   document.getElementById('filterCount').innerHTML = "";
-  //   return;
-  // }
+  if (!filterFunc) {
+    document.getElementById('filterCount').innerHTML = "";
+    return;
+  }
 
   let studiesToRender = model.studies;
   if (filterFunc) {
@@ -265,7 +299,9 @@ function render(filterFunc) {
   }
 
   let filterMessage = "";
-  if (studiesToRender.length < model.studies.length) {
+  if (studiesToRender.length === 0) {
+    filterMessage = noStudiesMessage();
+  } else if (studiesToRender.length < model.studies.length) {
     filterMessage = `Showing ${ studiesToRender.length } of ${ model.studies.length} studies`;
   }
   document.getElementById('filterCount').innerHTML = filterMessage;
@@ -280,6 +316,27 @@ function render(filterFunc) {
   studiesToRender.forEach(s => renderStudy(s, 'studies', linkFunc, htmlFunc));
 
   model.loadStudyThumbnails();
+}
+
+
+// When no studies match the filter, show message/link.
+function noStudiesMessage() {
+  let filterMessage = "No matching studies.";
+  if (SUPER_CATEGORY) {
+    let currLabel = SUPER_CATEGORY.label;
+    let configId = document.getElementById("maprConfig").value;
+    let maprQuery = document.getElementById("maprQuery").value;
+    let others = [];
+    for (cat in SUPER_CATEGORIES) {
+      if (SUPER_CATEGORIES[cat].label !== currLabel) {
+        others.push(`<a href="${GALLERY_INDEX}${ cat }/search/?query=${configId}:${maprQuery}">${ SUPER_CATEGORIES[cat].label }</a>`);
+      }
+    }
+    if (others.length > 0) {
+      filterMessage += " Try " + others.join (" or ");
+    }
+  }
+  return filterMessage;
 }
 
 
