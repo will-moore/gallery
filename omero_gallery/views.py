@@ -294,6 +294,20 @@ def search(request, super_category=None, conn=None, **kwargs):
     return context
 
 
+@render_response()
+def api_settings(request, conn=None, **kwargs):
+
+    context = {}
+    context['GALLERY_TITLE'] = gallery_settings.GALLERY_TITLE
+    context['FILTER_KEYS'] = gallery_settings.FILTER_KEYS
+    context['SUPER_CATEGORIES'] = gallery_settings.SUPER_CATEGORIES
+    context['TITLE_KEYS'] = gallery_settings.TITLE_KEYS
+    context['FILTER_MAPR_KEYS'] = gallery_settings.FILTER_MAPR_KEYS
+    context['BASE_URL'] = gallery_settings.BASE_URL
+    context['CATEGORY_QUERIES'] = gallery_settings.CATEGORY_QUERIES
+    return context
+
+
 def _get_study_images(conn, obj_type, obj_id, limit=1, offset=0):
 
     query_service = conn.getQueryService()

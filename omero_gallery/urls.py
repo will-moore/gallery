@@ -45,6 +45,9 @@ urlpatterns = patterns(
     # Supports e.g. ?project=1&project=2&screen=3
     url(r'^api/thumbnails/$', views.api_thumbnails,
         name='webgallery_api_thumbnails'),
+
+    url(r'^api/settings/$', views.api_settings,
+        name='webgallery_api_settings')
 )
 
 for c in SUPER_CATEGORIES:
