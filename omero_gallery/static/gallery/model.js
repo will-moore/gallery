@@ -5,13 +5,28 @@ var StudiesModel = function() {
 
   "use strict"
 
-  this.base_url = BASE_URL;
-
   this.studies = [];
 
   this.images = {}
 
   return this;
+}
+
+StudiesModel.prototype.loadSettings = function loadSettings(url, callback) {
+  fetch(url)
+    .then(response => response.json())
+    .then(data => {
+      let keys = ['FILTER_KEYS', 'FILTER_MAPR_KEYS', 'TITLE_KEYS', 'GALLERY_INDEX',
+                  'BASE_URL', 'CATEGORY_QUERIES'];
+      keys.forEach(key => {
+        if (data.hasOwnProperty(key)) {
+          window[key] = data[key];
+        };
+      });
+      if (callback) {
+        callback();
+      }
+    });
 }
 
 StudiesModel.prototype.getStudiesNames = function getStudiesNames(filterQuery) {
@@ -115,6 +130,7 @@ StudiesModel.prototype.getKeyValueAutoComplete = function getKeyValueAutoComplet
 
 StudiesModel.prototype.loadStudies = function loadStudies(callback) {
 
+  this.base_url = BASE_URL;
   // Load Projects AND Screens, sort them and render...
   Promise.all([
     fetch(this.base_url + "api/v0/m/projects/"),

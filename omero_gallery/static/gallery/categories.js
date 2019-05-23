@@ -262,34 +262,45 @@ function renderStudyKeys() {
       .join("\n");
   document.getElementById('studyKeys').innerHTML = html;
 }
-renderStudyKeys();
+
+// Load MAPR config
+function loadMaprConfig() {
+  fetch(BASE_URL + 'mapr/api/config/')
+    .then(response => response.json())
+    .then(data => {
+      mapr_settings = data;
+
+      let html = FILTER_MAPR_KEYS.map(key => {
+        let config = mapr_settings[key];
+        if (config) {
+          return `<option value="mapr_${ key }">${ config.label }</option>`;
+        } else {
+          return "";
+        }
+      }).join("\n");
+      document.getElementById('maprKeys').innerHTML = html;
+    });
+}
 
 
 // ----------- Load / Filter Studies --------------------
 
 // Do the loading and render() when done...
-model.loadStudies(() => {
-  // Immediately filter by Super category
-  if (SUPER_CATEGORY && SUPER_CATEGORY.query) {
-    model.studies = model.filterStudiesByMapQuery(SUPER_CATEGORY.query);
-  }
-  render();
-});
-
-
-// Load MAPR config
-fetch(BASE_URL + 'mapr/api/config/')
-  .then(response => response.json())
-  .then(data => {
-    mapr_settings = data;
-
-    let html = FILTER_MAPR_KEYS.map(key => {
-      let config = mapr_settings[key];
-      if (config) {
-        return `<option value="mapr_${ key }">${ config.label }</option>`;
-      } else {
-        return "";
-      }
-    }).join("\n");
-    document.getElementById('maprKeys').innerHTML = html;
+model.loadSettings(SETTINGS_URL, () => {
+  console.log('settings loaded')
+  console.log(window.FILTER_KEYS);
+  console.log(window.FILTER_MAPR_KEYS);
+  console.log(window.TITLE_KEYS);
+  console.log(window.GALLERY_INDEX);
+  console.log(window.BASE_URL);
+  console.log(window.CATEGORY_QUERIES);
+  renderStudyKeys();
+  loadMaprConfig();
+  model.loadStudies(() => {
+    // Immediately filter by Super category
+    if (SUPER_CATEGORY && SUPER_CATEGORY.query) {
+      model.studies = model.filterStudiesByMapQuery(SUPER_CATEGORY.query);
+    }
+    render();
   });
+});

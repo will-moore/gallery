@@ -303,8 +303,13 @@ def api_settings(request, conn=None, **kwargs):
     context['SUPER_CATEGORIES'] = gallery_settings.SUPER_CATEGORIES
     context['TITLE_KEYS'] = gallery_settings.TITLE_KEYS
     context['FILTER_MAPR_KEYS'] = gallery_settings.FILTER_MAPR_KEYS
-    context['BASE_URL'] = gallery_settings.BASE_URL
     context['CATEGORY_QUERIES'] = gallery_settings.CATEGORY_QUERIES
+
+    context['GALLERY_INDEX'] = reverse('webgallery_index')
+    base_url = reverse('index')
+    if gallery_settings.BASE_URL is not None:
+        base_url = gallery_settings.BASE_URL
+    context['BASE_URL'] = base_url
     return context
 
 
