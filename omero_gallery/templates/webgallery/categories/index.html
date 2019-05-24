@@ -44,17 +44,29 @@
     </div>
 
     {% if not super_category %}
-      <div class="row horizontal">
-      {% for category, data in super_categories.items %}
-        <a href="{{ category }}/">
-          <div class="small-6 medium-6 large-6 columns" style="position: relative;">
-            <img class="thumbnail" src="{{ data.image }}" />
-            <div class="img_overlay">
-              <span class="overlay_text">{{ data.label }}</span>
-            </div>
-          </div>
-        </a>
-      {% endfor %}
+      <div id="super_categories_header" class="row horizontal">
+
+        <script>
+          function renderSuperCategories(superCategories) {
+
+            let html = "";
+            for (category in superCategories) {
+              let data = superCategories[category];
+              html += `
+                <a href="${ GALLERY_INDEX + category }/">
+                  <div class="small-6 medium-6 large-6 columns" style="position: relative;">
+                    <img class="thumbnail" src="${ data.image }" />
+                    <div class="img_overlay">
+                      <span class="overlay_text">${ data.label }</span>
+                    </div>
+                  </div>
+                </a>
+              `
+            };
+            document.getElementById('super_categories_header').innerHTML = html;
+          }
+        </script>
+
       </div>
     {% endif %}
 

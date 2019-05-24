@@ -17,7 +17,7 @@ StudiesModel.prototype.loadSettings = function loadSettings(url, callback) {
     .then(response => response.json())
     .then(data => {
       let keys = ['FILTER_KEYS', 'FILTER_MAPR_KEYS', 'TITLE_KEYS', 'GALLERY_INDEX',
-                  'BASE_URL', 'CATEGORY_QUERIES'];
+                  'BASE_URL', 'CATEGORY_QUERIES', 'SUPER_CATEGORIES'];
       keys.forEach(key => {
         if (data.hasOwnProperty(key)) {
           window[key] = data[key];

@@ -288,12 +288,14 @@ function loadMaprConfig() {
 // Do the loading and render() when done...
 model.loadSettings(SETTINGS_URL, () => {
   console.log('settings loaded')
-  console.log(window.FILTER_KEYS);
-  console.log(window.FILTER_MAPR_KEYS);
-  console.log(window.TITLE_KEYS);
-  console.log(window.GALLERY_INDEX);
-  console.log(window.BASE_URL);
-  console.log(window.CATEGORY_QUERIES);
+  console.log('FILTER_KEYS', window.FILTER_KEYS);
+  console.log('FILTER_MAPR_KEYS', window.FILTER_MAPR_KEYS);
+  console.log('TITLE_KEYS', window.TITLE_KEYS);
+  console.log('GALLERY_INDEX', window.GALLERY_INDEX);
+  console.log('BASE_URL', window.BASE_URL);
+  console.log('CATEGORY_QUERIES', window.CATEGORY_QUERIES);
+  console.log('SUPER_CATEGORIES', window.SUPER_CATEGORIES);
+  renderSuperCategories(SUPER_CATEGORIES);  // function is in <script> in html
   renderStudyKeys();
   loadMaprConfig();
   model.loadStudies(() => {
