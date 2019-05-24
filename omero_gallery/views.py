@@ -30,24 +30,8 @@ def index(request, super_category=None):
 
     category_queries = gallery_settings.CATEGORY_QUERIES
     if len(category_queries) > 0:
-        context = {'template': "webgallery/categories/index.html"}
-        context['gallery_title'] = gallery_settings.GALLERY_TITLE
-        context['filter_keys'] = json.dumps(gallery_settings.FILTER_KEYS)
-        context['TITLE_KEYS'] = json.dumps(gallery_settings.TITLE_KEYS)
-        context['filter_mapr_keys'] = json.dumps(
-            gallery_settings.FILTER_MAPR_KEYS)
-        context['super_categories'] = gallery_settings.SUPER_CATEGORIES
-        category = gallery_settings.SUPER_CATEGORIES.get(super_category)
-        if category is not None:
-            label = category.get('label', context['gallery_title'])
-            title = category.get('title', label)
-            context['gallery_title'] = title
-            context['super_category'] = json.dumps(category)
-        base_url = reverse('index')
-        if gallery_settings.BASE_URL is not None:
-            base_url = gallery_settings.BASE_URL
-        context['base_url'] = base_url
-        context['category_queries'] = json.dumps(category_queries)
+        context = {'template': "webgallery/categories/index.html"}    
+        context['super_category'] = super_category
         return context
 
     return index_with_login(request)
