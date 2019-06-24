@@ -35,6 +35,10 @@ function Studies() {
           path="/"
           studies={data.studies}
         />
+        <Categories
+          path="/:superCategory/"
+          studies={data.studies}
+        />
         <Search
           path="/search/"
           studies={data.studies}

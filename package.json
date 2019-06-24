@@ -1,7 +1,7 @@
 {
   "name": "gallery2",
   "version": "0.1.0",
-  "homepage": "http://will-moore.github.io/idr/",
+  "homepage": "http://will-moore.github.io/gallery/",
   "private": true,
   "dependencies": {
     "@reach/router": "^1.2.1",
@@ -14,11 +14,9 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-scripts build && ./deploy_build.sh",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": "react-app"

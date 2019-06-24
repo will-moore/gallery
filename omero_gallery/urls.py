@@ -34,9 +34,6 @@ urlpatterns = patterns(
     url(r'show_image/(?P<image_id>[0-9]+)/$',
         views.show_image, name='webgallery_show_image'),
 
-    # Search page shows Projects / Screens filtered by Map Annotation
-    url(r'^search/$', views.search, {'super_category': None}),
-
     # list images within container. NB: not used but potentially useful
     url(r'^gallery-api/(?P<obj_type>[screen|project]+)s/'
         r'(?P<obj_id>[0-9]+)/images/$',
@@ -45,6 +42,9 @@ urlpatterns = patterns(
     # Supports e.g. ?project=1&project=2&screen=3
     url(r'^gallery-api/thumbnails/$', views.api_thumbnails,
         name='webgallery_api_thumbnails'),
+
+    # catch-all - render React app
+    url(r'^', views.index),
 )
 
 for c in SUPER_CATEGORIES:

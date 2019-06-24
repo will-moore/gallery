@@ -15,6 +15,12 @@ omero_gallery.egg-info
 # production
 /build
 
+# build script copies files here
+omero_gallery/static/gallery/css/
+omero_gallery/static/gallery/js/
+omero_gallery/static/gallery/media/
+omero_gallery/templates/gallery/
+
 # misc
 .DS_Store
 .env.local

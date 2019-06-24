@@ -24,14 +24,14 @@ function App() {
               </Link>
             </li>
             <li role="menuitem">
-              <a href="/cell/">
+              <Link to="/cell/">
                 Cell - IDR
-              </a>
+              </Link>
             </li>
             <li role="menuitem">
-              <a href="/tissue/">
+            <Link to="/tissue/">
                 Tissue - IDR
-              </a>
+              </Link>
             </li>
           </ul>
         </div>
