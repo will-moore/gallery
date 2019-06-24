@@ -1,6 +1,15 @@
 
 export const BASE_URL = "http://idr.openmicroscopy.org/";
 
+export async function fetchSettings() {
+  // http://localhost:4080/gallery/gallery_settings/
+  let url = "http://localhost:4080/gallery/gallery_settings/";
+  return await fetch(url)
+    .then(response => response.json())
+    .then(data => {
+      return data;
+    });
+}
 export function getStudyValue(study, key) {
   if (!study.mapValues) return;
   for (let i=0; i<study.mapValues.length; i++){
