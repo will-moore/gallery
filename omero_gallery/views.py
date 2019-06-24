@@ -280,32 +280,6 @@ def show_image(request, image_id, conn=None, **kwargs):
     return context
 
 
-@render_response()
-def search(request, super_category=None, conn=None, **kwargs):
-
-    context = {'template': "webgallery/categories/search.html"}
-    context['gallery_title'] = gallery_settings.GALLERY_TITLE
-    context['filter_keys'] = json.dumps(gallery_settings.FILTER_KEYS)
-    context['super_categories'] = gallery_settings.SUPER_CATEGORIES
-    context['SUPER_CATEGORIES'] = json.dumps(gallery_settings.SUPER_CATEGORIES)
-    context['TITLE_KEYS'] = json.dumps(gallery_settings.TITLE_KEYS)
-    context['filter_mapr_keys'] = json.dumps(
-            gallery_settings.FILTER_MAPR_KEYS)
-    category = gallery_settings.SUPER_CATEGORIES.get(super_category)
-    if category is not None:
-        label = category.get('label', context['gallery_title'])
-        title = category.get('title', label)
-        context['gallery_title'] = title
-        context['super_category'] = json.dumps(category)
-        context['category'] = super_category
-    base_url = reverse('index')
-    if gallery_settings.BASE_URL is not None:
-        base_url = gallery_settings.BASE_URL
-    context['base_url'] = base_url
-    context['category_queries'] = json.dumps(gallery_settings.CATEGORY_QUERIES)
-    return context
-
-
 def _get_study_images(conn, obj_type, obj_id, limit=1, offset=0):
 
     query_service = conn.getQueryService()
