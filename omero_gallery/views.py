@@ -19,7 +19,7 @@ try:
 except ImportError:
     get_encoder = None
 
-from . import gallery_settings
+from . import gallery_settings as settings
 
 logger = logging.getLogger(__name__)
 MAX_LIMIT = max(1, API_MAX_LIMIT)
@@ -32,29 +32,9 @@ def index(request, super_category=None):
     user-configured queries.
     """
 
-    category_queries = gallery_settings.CATEGORY_QUERIES
+    category_queries = settings.CATEGORY_QUERIES
     if len(category_queries) > 0:
-        # context = {'template': "webgallery/categories/index.html"}
-        # context['gallery_title'] = gallery_settings.GALLERY_TITLE
-        # context['filter_keys'] = json.dumps(gallery_settings.FILTER_KEYS)
-        # context['TITLE_KEYS'] = json.dumps(gallery_settings.TITLE_KEYS)
-        # context['filter_mapr_keys'] = json.dumps(
-        #     gallery_settings.FILTER_MAPR_KEYS)
-        # context['super_categories'] = gallery_settings.SUPER_CATEGORIES
-        # category = gallery_settings.SUPER_CATEGORIES.get(super_category)
-        # if category is not None:
-        #     label = category.get('label', context['gallery_title'])
-        #     title = category.get('title', label)
-        #     context['gallery_title'] = title
-        #     context['super_category'] = json.dumps(category)
-        #     context['category'] = super_category
-        # base_url = reverse('index')
-        # if gallery_settings.BASE_URL is not None:
-        #     base_url = gallery_settings.BASE_URL
-        # context['base_url'] = base_url
-        # context['category_queries'] = json.dumps(category_queries)
-        # return context
-        template = loader.get_template('gallery/gallery_index.html')
+        template = loader.get_template('gallery/index.html')
         html = template.render({}, request)
         static_gallery = static.static('gallery/')
         html = html.replace('href="/gallery/static', 'href="%s' % static_gallery)
@@ -101,6 +81,25 @@ def index_with_login(request, conn=None, **kwargs):
     # This is used by @render_response
     context = {'template': "webgallery/index.html"}
     context['groups'] = groups
+
+    return context
+
+@render_response()
+def gallery_settings(request):
+
+    attrs = ['CATEGORY_QUERIES',
+             'GALLERY_TITLE',
+             'FILTER_KEYS',
+             'TITLE_KEYS',
+             'FILTER_MAPR_KEYS',
+             'SUPER_CATEGORIES',
+             'BASE_URL'
+            ]
+
+    context = {}
+    for attr in attrs:
+        if getattr(settings, attr):
+            context[attr] = getattr(settings, attr)
 
     return context
 
