@@ -1,35 +1,41 @@
 {
-  "name": "omero-gallery",
-  "version": "3.2.0",
-  "description": "OMERO.web app for browsing images",
-  "main": "index.js",
+  "name": "gallery2",
+  "version": "0.1.0",
+  "homepage": "http://will-moore.github.io/idr/",
+  "private": true,
   "dependencies": {
-    "babel-core": "^6.26.3",
-    "babel-loader": "^7.1.5",
-    "babel-preset-es2015": "^6.24.1",
-    "webpack-cli": "^3.3.2",
-    "webpack": "^4.31.0"
-  },
-  "devDependencies": {
-    "@babel/cli": "^7.4.4",
-    "@babel/core": "^7.4.5",
-    "@babel/preset-env": "^7.4.5"
+    "@reach/router": "^1.2.1",
+    "query-string": "^6.7.0",
+    "react": "^16.8.6",
+    "react-autocomplete": "^1.8.1",
+    "react-dom": "^16.8.6",
+    "react-scripts": "3.0.1",
+    "typeface-nunito": "0.0.72"
   },
   "scripts": {
-    "build": "babel src -d omero_gallery/static/gallery --watch"
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ome/omero-gallery.git"
+  "eslintConfig": {
+    "extends": "react-app"
   },
-  "keywords": [
-    "OMERO",
-    "images"
-  ],
-  "author": "OME",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/ome/omero-gallery/issues"
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   },
-  "homepage": "https://github.com/ome/omero-gallery#readme"
+  "devDependencies": {
+    "gh-pages": "^2.0.1"
+  }
 }
