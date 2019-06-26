@@ -93,7 +93,12 @@ def gallery_settings(request):
              'TITLE_KEYS',
              'FILTER_MAPR_KEYS',
              'SUPER_CATEGORIES',
-             'BASE_URL'
+             'BASE_URL',
+             'TOP_RIGHT_LINKS',
+             'TOP_LEFT_LOGO',
+             'FOOTER_HTML',
+             'SUBHEADING_HTML',
+             'FAVICON',
             ]
 
     context = {}
