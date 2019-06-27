@@ -86,6 +86,7 @@ def index_with_login(request, conn=None, **kwargs):
 
 @render_response()
 def gallery_settings(request):
+    """Return all settings as JSON."""
 
     attrs = ['CATEGORY_QUERIES',
              'GALLERY_TITLE',
@@ -103,8 +104,10 @@ def gallery_settings(request):
 
     context = {}
     for attr in attrs:
-        if getattr(settings, attr):
+        try:
             context[attr] = getattr(settings, attr)
+        except AttributeError:
+            pass
 
     return context
 
