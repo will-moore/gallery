@@ -34,8 +34,12 @@ def index(request, super_category=None):
 
     category_queries = settings.CATEGORY_QUERIES
     if len(category_queries) > 0:
+        # React App
+        # We need to serve the create-react-app build.
         template = loader.get_template('gallery/index.html')
         html = template.render({}, request)
+        gallery_index = reverse('webgallery_index')
+        html.replace('http://localhost:4080/gallery/', gallery_index)
         static_gallery = static.static('gallery/')
         html = html.replace('href="/gallery/static', 'href="%s' % static_gallery)
         html = html.replace('src="/gallery/static', 'src="%s' % static_gallery)
