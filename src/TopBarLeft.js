@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { AbsoluteLink as Link } from "./router/wrappers";
-import { ReactComponent as Logo } from "./logo-idr.svg";
+import { ReactComponent as Logo } from "./omero-logo.svg";
 import SettingsContext from "./model/context";
 
 export default function TopBarLeft() {
@@ -15,6 +15,10 @@ export default function TopBarLeft() {
       });
     }
   }
+  let logo = <Logo />;
+  if (gallerySettings.TOP_LEFT_LOGO && gallerySettings.TOP_LEFT_LOGO.src) {
+    logo = <img src={gallerySettings.TOP_LEFT_LOGO.src} />;
+  }
 
   return (
     <div className="top-bar-left">
@@ -25,7 +29,7 @@ export default function TopBarLeft() {
       >
         <li role="menuitem">
           <Link to="/" className="logo">
-            <Logo />
+            {logo}
           </Link>
         </li>
         {topLinks.map(category => (

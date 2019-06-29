@@ -70,7 +70,6 @@ a {
     font-weight: bold;
 }
 
-.logo { max-width: 150px; }
 .logo.centered { margin: 20px auto; }
 .logo.sidebar { margin: 20px 0 20px 15px; }
 
@@ -126,12 +125,11 @@ a {
 /* ---------- main navigation ----------*/
 .logo {
     display: inline;
-    width: 120px;
 }
 
-.logo-hero {
-    margin-bottom: 30px;
-    width: 160px;
+.logo img, .logo svg {
+    height: 33px;
+    max-width: 200px;
 }
 
 .top-bar {
