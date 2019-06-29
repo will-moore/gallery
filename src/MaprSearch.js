@@ -1,18 +1,17 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { filterStudiesByMaprResponse } from './model/filterStudies';
-import { loadMaprStudies, getStudyValue } from './model/fetchData';
-import SettingsContext from './model/context';
+import React, { useState, useEffect, useContext } from "react";
+import { filterStudiesByMaprResponse } from "./model/filterStudies";
+import { loadMaprStudies, getStudyValue } from "./model/fetchData";
+import SettingsContext from "./model/context";
 
-function Search({studies, query}) {
-
-  const gallerySettings = useContext(SettingsContext)
+function Search({ studies, query }) {
+  const gallerySettings = useContext(SettingsContext);
 
   const [loading, setLoading] = useState(true);
   const [maprResults, setMaprResults] = useState([]);
 
-  let key = query.split(':')[0].replace('mapr_', '');
-  let value = query.split(':')[1];
-  
+  let key = query.split(":")[0].replace("mapr_", "");
+  let value = query.split(":")[1];
+
   useEffect(() => {
     const fetchData = async () => {
       // Load studies, then load map annotations and thumbnails for them
@@ -24,34 +23,45 @@ function Search({studies, query}) {
   }, []);
 
   if (loading || studies.length === 0) {
-    return (<div>Finding images with {key}: {value}...</div>);
+    return (
+      <div>
+        Finding images with {key}: {value}...
+      </div>
+    );
   }
 
   // filter studies by results
   // maprResults is a list e.g. [{term:Top2, projects:[], screens:[]}, {term: TOP2...}
-  let studiesByTerm = maprResults.map(data => filterStudiesByMaprResponse(studies, data));
+  let studiesByTerm = maprResults.map(data =>
+    filterStudiesByMaprResponse(studies, data)
+  );
   let terms = maprResults.map(r => r.term);
   let imageCount = studiesByTerm.reduce((count, studies) => {
-    return count + studies.reduce((count, study) => count + study.imageCount, 0);
+    return (
+      count + studies.reduce((count, study) => count + study.imageCount, 0)
+    );
   }, 0);
-  let studyCount = studiesByTerm.reduce((count, studies) => count + studies.length, 0);
+  let studyCount = studiesByTerm.reduce(
+    (count, studies) => count + studies.length,
+    0
+  );
 
   if (studyCount === 0) {
-    return (<div>No matching studies. Try (TODO: other) IDR.</div>)
+    return <div>No matching studies. Try (TODO: other) IDR.</div>;
   }
 
   return (
     <div className="small-12 small-centered medium-12 medium-centered text-center columns">
       <p className="filterMessage">
-       Found <strong>{imageCount}</strong> images
-       with <strong>{key}</strong>: <strong>{terms.join('/')}
-       </strong> in <strong>{studyCount}</strong> studies
+        Found <strong>{imageCount}</strong> images with <strong>{key}</strong>:{" "}
+        <strong>{terms.join("/")}</strong> in <strong>{studyCount}</strong>{" "}
+        studies
       </p>
 
-      { studiesByTerm.map((studies, idx) => (
+      {studiesByTerm.map((studies, idx) => (
         <div>
           <h2>{terms[idx]}</h2>
-          <table style={{ marginTop: 20}}>
+          <table style={{ marginTop: 20 }}>
             <tbody>
               <tr>
                 <th>Study ID</th>
@@ -64,27 +74,38 @@ function Search({studies, query}) {
               {studies.map(study => (
                 <tr>
                   <td>
-                    <a target="_blank" rel="noopener noreferrer"
-                        href={`${ gallerySettings.BASE_URL}mapr/${ key }/?value=${ terms[idx] }&show=${study.objId}`}>
+                    <a
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      href={`${gallerySettings.BASE_URL}mapr/${key}/?value=${
+                        terms[idx]
+                      }&show=${study.objId}`}
+                    >
                       {study.objId}
                     </a>
                   </td>
-                  <td>{ getStudyValue(study, 'Organism') }</td>
-                  <td>{ study.imageCount }</td>
-                  <td title={ study.title }>
-                    { study.title.slice(0,40) }{ study.title.length > 40 ? '...' : '' }
+                  <td>{getStudyValue(study, "Organism")}</td>
+                  <td>{study.imageCount}</td>
+                  <td title={study.title}>
+                    {study.title.slice(0, 40)}
+                    {study.title.length > 40 ? "..." : ""}
                   </td>
-                  <td class="exampleImages"></td>
-                  <td class="exampleImagesLink"><a target="_blank" href="/mapr/gene/?value=TOP2&amp;show=plate-101">
-                    more...
-                  </a></td>
+                  <td class="exampleImages" />
+                  <td class="exampleImagesLink">
+                    <a
+                      target="_blank"
+                      href="/mapr/gene/?value=TOP2&amp;show=plate-101"
+                    >
+                      more...
+                    </a>
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
       ))}
-      </div>
+    </div>
   );
 }
 
