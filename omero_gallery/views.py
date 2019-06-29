@@ -1,5 +1,5 @@
 from django.http import Http404, HttpResponse
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse, NoReverseMatch
 from django.views.generic import View
 from django.template import loader
 from django.templatetags import static
@@ -112,6 +112,15 @@ def gallery_settings(request):
             context[attr] = getattr(settings, attr)
         except AttributeError:
             pass
+
+    base_url = context.get('BASE_URL')
+    if base_url is None:
+        base_url = 'index'
+    try:
+        base_url = reverse(base_url)
+        context['BASE_URL'] = request.build_absolute_uri(base_url)
+    except NoReverseMatch:
+        pass
 
     return context
 
