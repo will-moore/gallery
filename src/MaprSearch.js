@@ -1,8 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { filterStudiesByMaprResponse } from './model/filterStudies';
-import { BASE_URL, loadMaprStudies, getStudyValue } from './model/fetchData';
+import { loadMaprStudies, getStudyValue } from './model/fetchData';
+import SettingsContext from './model/context';
 
 function Search({studies, query}) {
+
+  const gallerySettings = useContext(SettingsContext)
 
   const [loading, setLoading] = useState(true);
   const [maprResults, setMaprResults] = useState([]);
@@ -62,7 +65,7 @@ function Search({studies, query}) {
                 <tr>
                   <td>
                     <a target="_blank" rel="noopener noreferrer"
-                        href={`${ BASE_URL}mapr/${ key }/?value=${ terms[idx] }&show=${study.objId}`}>
+                        href={`${ gallerySettings.BASE_URL}mapr/${ key }/?value=${ terms[idx] }&show=${study.objId}`}>
                       {study.objId}
                     </a>
                   </td>

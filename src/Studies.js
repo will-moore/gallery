@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { Router } from "@reach/router"
+import SettingsContext from './model/context';
 import Categories from './Categories';
 import Search from './Search';
 import SearchForm from './SearchForm';
@@ -10,20 +11,23 @@ import { BASEPATH } from './router/wrappers';
 
 function Studies() {
 
+  const gallerySettings = useContext(SettingsContext);
+  const base_url = gallerySettings.BASE_URL;
+
   const [data, setData] = useState({ studies: [] });
 
   useEffect(() => {
     const fetchData = async () => {
-
+      if (!base_url) return;
       // Load studies, then load map annotations and thumbnails for them
-      let studies = await fetchStudies();
-      studies = await loadStudiesMapAnnotations(studies);
-      studies = await loadStudiesThumbnails(studies);
+      let studies = await fetchStudies(base_url);
+      studies = await loadStudiesMapAnnotations(studies, base_url);
+      studies = await loadStudiesThumbnails(studies, base_url);
       setData({studies});
     };
 
     fetchData();
-  }, []);
+  }, [base_url]);
 
   return (
     <div className="row column">

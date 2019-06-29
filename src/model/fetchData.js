@@ -1,8 +1,7 @@
 
-export const BASE_URL = "http://idr.openmicroscopy.org/";
-
+// First we get gallery_settings. This contains BASE_URL
+// which is then used for other calls to load data.
 export async function fetchSettings() {
-  // http://localhost:4080/gallery/gallery_settings/
   let url = window.GALLERY_INDEX + "gallery_settings/";
   return await fetch(url)
     .then(response => response.json())
@@ -20,11 +19,11 @@ export function getStudyValue(study, key) {
   }
 }
 
-export async function fetchStudies() {
+export async function fetchStudies(base_url) {
   // Load Projects AND Screens, sort them and render...
   let studies = await Promise.all([
-    fetch(BASE_URL + "api/v0/m/projects/?childCount=true"),
-    fetch(BASE_URL + "api/v0/m/screens/?childCount=true"),
+    fetch(base_url + "api/v0/m/projects/?childCount=true"),
+    fetch(base_url + "api/v0/m/screens/?childCount=true"),
   ]).then(responses =>
     Promise.all(responses.map(res => res.json()))
     ).then(([projects, screens]) => {
@@ -60,8 +59,8 @@ export async function fetchStudies() {
   return studies;
 }
   
-  export async function loadStudiesMapAnnotations(studies) {
-    let url = BASE_URL + "webclient/api/annotations/?type=map";
+  export async function loadStudiesMapAnnotations(studies, base_url) {
+    let url = base_url + "webclient/api/annotations/?type=map";
     let data = studies
       .map(study => `${ study.type }=${ study.id }`)
       .join("&");
@@ -104,8 +103,8 @@ export async function fetchStudies() {
       });
   }
 
-  export async function loadStudiesThumbnails(studies) {
-    let url = BASE_URL + "gallery-api/thumbnails/";
+  export async function loadStudiesThumbnails(studies, base_url) {
+    let url = base_url + "gallery/gallery-api/thumbnails/";
   
     let toFind = studies.map(study => `${ study.type }=${ study.id }`);
     return await fetch(url + '?' + toFind.join('&'))
@@ -123,20 +122,20 @@ export async function fetchStudies() {
       });
   }
 
-  export async function loadMaprAutocomplete(key, value) {
-    let url = `${ BASE_URL }mapr/api/autocomplete/${ key }/`;
+  export async function loadMaprAutocomplete(key, value, base_url) {
+    let url = `${ base_url }mapr/api/autocomplete/${ key }/`;
     url += `?value=${ value.toLowerCase() }&query=true`;
     let matches = await fetch(url).then(response => response.json());
     return matches;
   }
 
-  export async function loadMaprStudies(key, value) {  
+  export async function loadMaprStudies(key, value, base_url) {  
     // Get all terms that match (NOT case_sensitive)
-    let url = `${ BASE_URL }mapr/api/${ key }/?value=${ value }&case_sensitive=false&orphaned=true`;
+    let url = `${ base_url }mapr/api/${ key }/?value=${ value }&case_sensitive=false&orphaned=true`;
     let data = await fetch(url).then(response => response.json());
     
     let maprTerms = data.maps.map(term => term.id);
-    let termUrls = maprTerms.map(term => `${ BASE_URL }mapr/api/${ key }/?value=${ term }`);
+    let termUrls = maprTerms.map(term => `${ base_url }mapr/api/${ key }/?value=${ term }`);
 
     // Get results for All terms
     return await Promise.all(termUrls.map(url => fetch(url)))
