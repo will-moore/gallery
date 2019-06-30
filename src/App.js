@@ -33,16 +33,6 @@ function App() {
         <TopBarLeft />
       </div>
       <hr className="whitespace" style={hrStyle} />
-      <div className="row columns text-center">
-        <h1>Welcome to IDR</h1>
-        <p>
-          The Image Data Resource (IDR) is a public repository of image datasets
-          from published scientific studies,
-          <br />
-          where the community can submit, search and access high-quality
-          bio-image data.
-        </p>
-      </div>
 
       <Studies />
     </SettingsProvider>

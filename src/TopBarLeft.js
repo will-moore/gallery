@@ -17,7 +17,7 @@ export default function TopBarLeft() {
   }
   let logo = <Logo />;
   if (gallerySettings.TOP_LEFT_LOGO && gallerySettings.TOP_LEFT_LOGO.src) {
-    logo = <img src={gallerySettings.TOP_LEFT_LOGO.src} />;
+    logo = <img alt="logo" src={gallerySettings.TOP_LEFT_LOGO.src} />;
   }
 
   return (

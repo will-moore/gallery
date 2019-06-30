@@ -15,12 +15,18 @@ function Categories({ studies, superCategory }) {
         id: category
       });
     }
+    categories.sort((a, b) => {
+      return a.index > b.index ? 1 : -1;
+    });
   }
 
+  let title = gallerySettings.GALLERY_TITLE || "OMERO.Gallery";
+
   // If we got a 'superCategory' from URL, check it is valid...
-  if (superCategory !== undefined) {
+  if (superCategory !== undefined && gallerySettings.SUPER_CATEGORIES) {
     const superCategories = gallerySettings.SUPER_CATEGORIES;
     if (superCategories[superCategory]) {
+      title = superCategories[superCategory].title;
       let query = superCategories[superCategory].query;
       studies = filterStudiesByMapQuery(studies, query);
     } else {
@@ -30,11 +36,23 @@ function Categories({ studies, superCategory }) {
   }
 
   return (
+    <React.Fragment>
+    <div className="row columns text-center">
+      <h1>{ title }</h1>
+      <p>
+        The Image Data Resource (IDR) is a public repository of image datasets
+        from published scientific studies,
+        <br />
+        where the community can submit, search and access high-quality
+        bio-image data.
+      </p>
+    </div>
     <div id="studies" className="row horizontal">
       {categories.map(category => (
         <Category key={category.label} data={category} studies={studies} />
       ))}
     </div>
+    </React.Fragment>
   );
 }
 
