@@ -20,7 +20,7 @@ function Search({ studies, query }) {
       setMaprResults(results);
     };
     fetchData();
-  }, []);
+  }, [key, value]);
 
   if (loading || studies.length === 0) {
     return (

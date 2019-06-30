@@ -3,7 +3,6 @@ import { Router } from "@reach/router";
 import SettingsContext from "./model/context";
 import Categories from "./Categories";
 import Search from "./Search";
-import SearchForm from "./SearchForm";
 import {
   fetchStudies,
   loadStudiesMapAnnotations,
@@ -32,7 +31,6 @@ function Studies() {
 
   return (
     <div className="row column">
-      <SearchForm studies={data.studies} />
       <Router primary={false} basepath={BASEPATH}>
         <Categories path="/" studies={data.studies} />
         <Categories path="/:superCategory/" studies={data.studies} />

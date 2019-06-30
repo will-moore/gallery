@@ -1,5 +1,6 @@
 import React, { useContext } from "react";
 import Category from "./Category";
+import SearchForm from "./SearchForm";
 import { filterStudiesByMapQuery } from "./model/filterStudies";
 import SettingsContext from "./model/context";
 
@@ -47,6 +48,7 @@ function Categories({ studies, superCategory }) {
         bio-image data.
       </p>
     </div>
+    <SearchForm studies={studies} />
     <div id="studies" className="row horizontal">
       {categories.map(category => (
         <Category key={category.label} data={category} studies={studies} />

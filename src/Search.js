@@ -1,5 +1,6 @@
 import React from "react";
 import CategoryStudy from "./CategoryStudy";
+import SearchForm from "./SearchForm";
 import MaprSearch from "./MaprSearch";
 import { filterStudiesByMapQuery } from "./model/filterStudies";
 const queryString = require("query-string");
@@ -23,6 +24,7 @@ function Search({ studies, location }) {
 
   return (
     <div className="small-12 small-centered medium-12 medium-centered columns">
+      <SearchForm studies={studies} />
       <div id="studies" className="row horizontal studiesLayout">
         {filteredStudies.map(study => (
           <CategoryStudy key={study.objId} study={study} />

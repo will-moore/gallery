@@ -103,7 +103,7 @@ export async function loadStudiesMapAnnotations(studies, base_url) {
 }
 
 export async function loadStudiesThumbnails(studies, base_url) {
-  let url = base_url + "gallery/gallery-api/thumbnails/";
+  let url = base_url + "gallery-api/thumbnails/";
 
   let toFind = studies.map(study => `${study.type}=${study.id}`);
   return await fetch(url + "?" + toFind.join("&"))
