@@ -5,7 +5,7 @@ import { Link, navigate } from "@reach/router";
 // Based on discussion and example at
 // https://github.com/reach/router/issues/78#issuecomment-404478024
 
-// For deploying at 'https://will-moore.github.io/idr
+// For deploying at '<server>/gallery
 export const BASEPATH = "/gallery";
 
 export const AbsoluteLink = ({ to = "", children, ...props }) => {
