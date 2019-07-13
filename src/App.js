@@ -5,7 +5,8 @@ import "./css/openmicroscopy.css";
 import "./css/idr.css";
 import "./css/studies.css";
 import Studies from "./Studies";
-import TopBarLeft from "./TopBarLeft";
+import TopBarLeft from "./TopBar/TopBarLeft";
+import TopBarRight from "./TopBar/TopBarRight";
 import { fetchSettings } from "./model/fetchData";
 import { SettingsProvider } from "./model/context";
 
@@ -17,6 +18,7 @@ function App() {
     const fetchData = async () => {
       // Load settings....
       let settings = await fetchSettings();
+      console.log('App.js ettings', settings)
       setGallerySettings(settings);
     };
 
@@ -31,6 +33,7 @@ function App() {
     <SettingsProvider value={gallerySettings}>
       <div className="main-nav-bar top-bar" id="main-menu">
         <TopBarLeft />
+        <TopBarRight />
       </div>
       <hr className="whitespace" style={hrStyle} />
 

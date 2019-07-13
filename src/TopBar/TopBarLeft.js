@@ -1,10 +1,12 @@
 import React, { useContext } from "react";
-import { AbsoluteLink as Link } from "./router/wrappers";
-import { ReactComponent as Logo } from "./omero-logo.svg";
-import SettingsContext from "./model/context";
+import { AbsoluteLink as Link } from "../router/wrappers";
+import { ReactComponent as Logo } from "../omero-logo.svg";
+import SettingsContext from "../model/context";
 
 export default function TopBarLeft() {
   const gallerySettings = useContext(SettingsContext);
+
+  console.log('gallerySettingsLeft', gallerySettings);
 
   let topLinks = [];
   if (gallerySettings.SUPER_CATEGORIES) {
