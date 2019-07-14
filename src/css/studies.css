@@ -39,6 +39,9 @@
   a.pubmed {
     color: #44a6ea
   }
+  .scLink>div {
+    position: relative;
+  }
   .img_overlay {
     position: absolute;
     top: 50%;

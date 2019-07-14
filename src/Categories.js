@@ -3,6 +3,7 @@ import Category from "./Category";
 import SearchForm from "./SearchForm";
 import { filterStudiesByMapQuery } from "./model/filterStudies";
 import SettingsContext from "./model/context";
+import SuperCategoryLinks from "./SuperCategoryLinks";
 
 function Categories({ studies, superCategory }) {
   const gallerySettings = useContext(SettingsContext);
@@ -23,9 +24,10 @@ function Categories({ studies, superCategory }) {
 
   let title = gallerySettings.GALLERY_TITLE || "OMERO.Gallery";
 
+  const superCategories = gallerySettings.SUPER_CATEGORIES;
+
   // If we got a 'superCategory' from URL, check it is valid...
   if (superCategory !== undefined && gallerySettings.SUPER_CATEGORIES) {
-    const superCategories = gallerySettings.SUPER_CATEGORIES;
     if (superCategories[superCategory]) {
       title = superCategories[superCategory].title;
       let query = superCategories[superCategory].query;
@@ -49,6 +51,10 @@ function Categories({ studies, superCategory }) {
       </p>
     </div>
     <SearchForm studies={studies} />
+    <SuperCategoryLinks
+      superCategory={superCategory}
+      superCategories={superCategories}
+    />
     <div id="studies" className="row horizontal">
       {categories.map(category => (
         <Category key={category.label} data={category} studies={studies} />
