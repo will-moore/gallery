@@ -5,8 +5,7 @@ import "typeface-nunito";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 
-// This will get set correctly in views.py when Django serves the app. 
-// This default is used when running from webpack dev server.
+// This will get set correctly in views.py
 window.GALLERY_INDEX = "http://localhost:4080/gallery/";
 
 ReactDOM.render(<App />, document.getElementById("root"));
