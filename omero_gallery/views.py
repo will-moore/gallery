@@ -104,6 +104,7 @@ def gallery_settings(request):
              'FOOTER_HTML',
              'SUBHEADING_HTML',
              'FAVICON',
+             'STUDY_SHORT_NAME',
             ]
 
     context = {}

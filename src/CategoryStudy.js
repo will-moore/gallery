@@ -1,5 +1,6 @@
 import React, { useContext } from "react";
 import SettingsContext from "./model/context";
+import { getStudyShortName } from './model/fetchData';
 
 function CategoryStudy({ study }) {
   const gallerySettings = useContext(SettingsContext);
@@ -8,10 +9,11 @@ function CategoryStudy({ study }) {
   if (study.thumbnail) {
     studyStyle["backgroundImage"] = `url("${study.thumbnail}")`;
   }
+  let shortNameConfig = gallerySettings.STUDY_SHORT_NAME || [];
 
   return (
     <div key={study.objId} className="row study">
-      <div>{study.id}</div>
+      <div>{getStudyShortName(study, shortNameConfig)}</div>
       <div className="studyImage" style={studyStyle}>
         <a
           target="_blank"

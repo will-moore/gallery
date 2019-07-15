@@ -148,3 +148,48 @@ export async function loadMaprStudies(key, value, base_url) {
       });
     });
 }
+
+function toTitleCase(text) {
+  if (!text || text.length === 0) return text;
+  return text[0].toUpperCase() + text.slice(1);
+}
+
+export function getStudyShortName(study, short_name_config) {
+  let shortName = `${toTitleCase(study.type)}: ${study.id}`;
+  if (short_name_config) {
+    for (let i=0; i < short_name_config.length; i++) {
+      let key = short_name_config[i]['key'];
+      let value;
+      let newShortName;
+      if (key === 'Name' || key === 'Description') {
+        value = study[key];
+      }
+      if (!value) {
+        value = getStudyValue(study, key);
+      }
+      if (!value) {
+        continue;
+      }
+      if (short_name_config[i]['regex'] && short_name_config[i]['template']) {
+        let re = new RegExp(short_name_config[i]['regex']);
+        let groups = re.exec(value);
+        if (groups && groups.length > 1) {
+          // template e.g. "{{1}}-{{2}}"
+          let template = short_name_config[i]['template'];
+          for (let g=0; g<groups.length; g++) {
+            template = template.replace(`{{${g}}}`, groups[g]);
+          }
+          // strip out any unused {{2}} etc.
+          newShortName = template.replace(/{{\d+}}/g, "");
+        }
+      } else {
+        newShortName = value;
+      }
+      if (newShortName) {
+        shortName = newShortName;
+        break;
+      }
+    }
+  }
+  return shortName;
+}
