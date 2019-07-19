@@ -11,6 +11,10 @@ function CategoryStudy({ study }) {
   }
   let shortNameConfig = gallerySettings.STUDY_SHORT_NAME || [];
 
+
+  var authors = getStudyValue(study, "Publication Authors") || "";
+  var author = authors.split(',')[0] || '';
+
   return (
     <div key={study.objId} className="row study">
       <div>{getStudyShortName(study, shortNameConfig)}</div>
