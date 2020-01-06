@@ -1,10 +1,9 @@
-from django.conf.urls import url, patterns
-from gallery_settings import SUPER_CATEGORIES
+from django.conf.urls import url
+from .gallery_settings import SUPER_CATEGORIES
 
 from . import views
 
-urlpatterns = patterns(
-    'django.views.generic.simple',
+urlpatterns = [
 
     # index 'home page' of the webgallery app
     url(r'^$', views.index, name='webgallery_index'),
@@ -47,4 +46,4 @@ urlpatterns = patterns(
 
     # catch-all - render React app
     url(r'^', views.index),
-)
+]
